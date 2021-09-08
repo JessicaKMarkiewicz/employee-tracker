@@ -4,7 +4,7 @@ DROP TABLE IF EXISTS department;
 
 CREATE TABLE department (
     id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(30) UNIQUE NOT NULL,
+    name VARCHAR(30) UNIQUE NOT NULL
 );
 
 CREATE TABLE role (
@@ -22,5 +22,5 @@ CREATE TABLE employee (
     role_id INT UNSIGNED NOT NULL,
     FOREIGN KEY (role_id) REFERENCES role(id) ON DELETE CASCADE,
     manager_id INT UNSIGNED,
-    FOREIGN KEY (manager_id) REFERENCES employee(id) ON DELETE SET NULL
+    FOREIGN KEY (manager_id) REFERENCES employee(id) ON DELETE SET NULL  
 );

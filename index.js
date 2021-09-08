@@ -86,6 +86,24 @@ function init() {
         })
 }
 
+// Function to View All Employees
+function viewAllEmployees() {
+    const sql = `SELECT employee.id, employee.first_name, employee.last_name, role.title, role.salary, department.name 
+    FROM employee, role, department 
+    WHERE employee.role_id = role.id AND role.department_id =department.id 
+    ORDER BY employee.id ASC;` 
+    db.query(sql, (err, response) => {
+        if (err) {
+        throw(err); 
+        return;
+        }
+        console.log(`                               ` + chalk.white.bold(`Employees Table`));
+        console.table(response);
+        
+});
+promptInit();
+};
+
 init ();
 
 
