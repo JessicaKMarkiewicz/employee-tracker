@@ -1,4 +1,4 @@
-INSERT INTO department (name, id)
+INSERT INTO department (name, id )
 VALUES
     ('Management', 1),
     ('Sales', 2),
@@ -18,7 +18,7 @@ VALUES
     ('Quality Assurance Associate', 55000, 6),
     ('Supplier Relations Associate', 50000, 6),
     ('Customer Relations Associate', 50000, 6),
-    ('Warehouse Manager', 150000, 7),
+    ('Warehouse Manager', 150000, 1),
     ('Warehouse Associate', 80000, 7),
     ('Intern', 40000, 5);
 
