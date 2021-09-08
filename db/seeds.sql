@@ -41,4 +41,3 @@ VALUES
     ('Kelly', 'Kapoor', 6, 1),
     ('Ryan', 'Howard', 5, 1);
 
-
