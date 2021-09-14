@@ -1,12 +1,12 @@
-INSERT INTO department (name, id )
+INSERT INTO department (name)
 VALUES
-    ('Management', 1),
-    ('Sales', 2),
-    ('Accounting', 3),
-    ('Human Resources', 4),
-    ('Support Staff', 5),
-    ('Product Oversight', 6),
-    ('Warehouse', 7);
+    ('Management'),
+    ('Sales'),
+    ('Accounting'),
+    ('Human Resources'),
+    ('Support Staff'),
+    ('Product Oversight'),
+    ('Warehouse');
 
 INSERT INTO role (title, salary, department_id)
 VALUES
@@ -18,7 +18,7 @@ VALUES
     ('Quality Assurance Associate', 55000, 6),
     ('Supplier Relations Associate', 50000, 6),
     ('Customer Relations Associate', 50000, 6),
-    ('Warehouse Manager', 150000, 1),
+    ('Warehouse Manager', 150000, 7),
     ('Warehouse Associate', 80000, 7),
     ('Intern', 40000, 5);
 
@@ -37,9 +37,9 @@ VALUES
     ('Toby', 'Flenderson', 4, 1),
     ('Pamela', 'Beasley', 5, 1),
     ('Creed', 'Bratton', 6, 1),
-    ('Meredith', 'Palmer', 6, 1),
-    ('Kelly', 'Kapoor', 6, 1),
-    ('Darryl', 'Philbin', 7, 1),
-    ('Roy', 'Anderson', 7, 1),
-    ('Ryan', 'Howard', 5, 1);
+    ('Meredith', 'Palmer', 7, 1),
+    ('Kelly', 'Kapoor', 8, 1),
+    ('Darryl', 'Philbin', 9, 1),
+    ('Roy', 'Anderson', 10, 1),
+    ('Ryan', 'Howard', 11, 1);
 
