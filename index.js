@@ -259,7 +259,7 @@ function deleteRoleRecord(roleTitle) {
             console.log(err);
         }
         console.log(chalk.white.bold(`====================================================================================`));
-        console.log(chalk.white(` Role Successfully Removed `));
+        console.log(chalk.white.bold(                      ` Role Successfully Removed `));
         console.log(chalk.white.bold(`====================================================================================`));
         // Display Role Table 
         viewAllRoles();
@@ -269,9 +269,10 @@ function deleteRoleRecord(roleTitle) {
 // Remove Department from Department Table - WORKING
 function removeDept() {
     // Call chooseDept  with action to remove
-    chooseDept('remove')
+    chooseDept('remove');
 }
 
+// Choose Department on which removal action will be performed
 function chooseDept(operation) {
     // Get Department data
     const sql = `SELECT * FROM department`;  
@@ -321,12 +322,77 @@ function deleteDeptRecord(deptName) {
             console.log(err);
         }
         console.log(chalk.white.bold(`====================================================================================`));
-        console.log(chalk.white(` Department Successfully Removed `));
+        console.log(chalk.white.bold(                   ` Department Successfully Removed `));
         console.log(chalk.white.bold(`====================================================================================`));
         // Display Department Table
         viewAllDepts();
     });
 };
+
+// Remove Employee - WORKING
+function removeEmployee() {
+    // Call chooseEmployee with action to delete
+    chooseEmployee('delete');  
+}
+// Choose Employee on which removal action will be performed
+function chooseEmployee(operation) {
+    const sql = `SELECT employee.first_name, employee.last_name, employee.id FROM employee`; 
+    db.query(sql, (err,response) => {
+        if(err){
+        throw(err);
+        return;
+        }
+        // Store Employee names in an array 
+        let empNameArr = [];
+        response.forEach(employee => {
+            empNameArr.push(`${employee.first_name} ${employee.last_name}`);
+        });
+        // Ask user which Employee they want to remove
+        inquirer
+        .prompt([
+        {
+            name: 'empChoice',
+            type: 'list',
+            message: 'Select the employee you would like to remove:',
+            choices: empNameArr
+        }
+        ])
+        // Fetch corresponding Employee record 
+        .then (({empChoice}) => {     
+            response.forEach(employee => {
+                if(empChoice === `${employee.first_name} ${employee.last_name}`) {
+                    let empId = employee.id;
+                    // If removing employee, call deleteEmpRecord
+                    if(operation === 'delete')  
+                    deleteEmpRecord(empId);
+                    // If updating employee role, call updateEmployee
+                    if(operation === 'update')  
+                    updateEmployee(empId);
+                }
+            })
+        });
+    });
+}
+// Remove Employee Record from Employee Table - WORKING
+function deleteEmpRecord(empId) {    
+    db.query(`DELETE FROM employee WHERE id = ?`, [empId], (err, result) => {
+        if (err) {
+            console.log(err);
+        }
+        console.log(chalk.white.bold(`====================================================================================`));
+        console.log(chalk.white.bold(                       ` Employee Successfully Removed `));
+        console.log(chalk.white.bold(`====================================================================================`));
+        viewAllEmployees();
+    });
+};
+// REMOVE FUNCTIONS END
+
+// UPDATE FUNCTIONS BEGIN
+// Update Employee
+
+
+
+
 
 
 init();
