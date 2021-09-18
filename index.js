@@ -46,13 +46,13 @@ function init() {
         case "View All Employees":
           viewAllEmployees();
           break;
-        case "View Employees By Department":
+        case "View Employees by Department":
           viewEmpByDept();
           break;
-        case "View Employees By Role":
+        case "View Employees by Role":
           viewEmpByRole();
           break;
-        case "View Employees By Manager":
+        case "View Employees by Manager":
           viewEmpByMngr();
           break;
         case "Add Employee":
@@ -93,33 +93,51 @@ function init() {
 }
 
 // VIEW FUNCTIONS BEGIN
-// VIEW ALL EMPLOYEES - WORKING
+// VIEW ALL EMPLOYEES
 function viewAllEmployees() {
-  const sql = `SELECT employee.id AS ID, employee.first_name AS FirstName, employee.last_name AS LastName, role.title AS Title, role.salary AS Salary, department.name AS Department
-    FROM employee, role, department
-    WHERE employee.role_id = role.id AND role.department_id = department.id
-    ORDER BY employee.id ASC;`
+  const sql = `
+    SELECT 
+      employee.id AS ID,
+      employee.first_name AS FirstName, 
+      employee.last_name AS LastName, 
+      role.title AS Title, 
+      role.salary AS Salary, 
+      department.name AS Department, 
+      CONCAT(manager.first_name, " ", manager.last_name) AS Manager
+    FROM employee
+    LEFT JOIN role 
+      ON employee.role_id = role.id
+    LEFT JOIN department 
+      ON role.department_id = department.id
+    LEFT JOIN employee AS manager
+      ON employee.manager_id = manager.id
+    ORDER BY employee.id;`
   db.query(sql, (err, response) => {
     if (err) {
       throw(err);
       return;
     }
     console.log(``);
-    console.log(chalk.white.bold(`====================================================================================`));
-    console.log(`                              ` + chalk.white.bold(` Employees `));
-    console.log(chalk.white.bold(`====================================================================================`));
+    console.log(chalk.white.bold(`============================================================================================================`));
+    console.log(`                                           ` +chalk.white.bold(` Employees `));
+    console.log(chalk.white.bold(`============================================================================================================`));
     console.table(response);
-    console.log(chalk.white.bold(`====================================================================================`));
+    console.log(chalk.white.bold(`============================================================================================================`));
   });
   init();
 };
 
-// VIEW ALL ROLES - WORKING
+// VIEW ALL ROLES
 function viewAllRoles() {
-  const sql = `SELECT role.id AS ID, role.title AS Role, department.name AS Department, role.salary AS Salary
+  const sql = `
+    SELECT 
+      role.id AS ID,
+      role.title AS Role, 
+      department.name AS Department, 
+      role.salary AS Salary
     FROM role, department
     WHERE role.department_id = department.id
-    ORDER BY role.id ASC;`
+    ORDER BY role.id;`
   db.query(sql, (err, response) => {
     if (err) {
       throw(err);
@@ -135,10 +153,14 @@ function viewAllRoles() {
   init();
 };
 
-// VIEW ALL DEPARTMENTS - WORKING
+// VIEW ALL DEPARTMENTS
 function viewAllDepts() {
-  const sql = `SELECT * from department
-    ORDER BY department.id ASC;`
+  const sql = `
+    SELECT 
+      id AS ID, 
+      name AS Name 
+    FROM department
+    ORDER BY department.id;`
   db.query(sql, (err, response) => {
     if (err) {
       throw(err);
@@ -156,54 +178,74 @@ function viewAllDepts() {
 
 // VIEW EMPLOYEES BY ROLE
 function viewEmpByRole() {
-  const sql = `SELECT employee.id AS EmployeeID, CONCAT(employee.first_name, " ", employee.last_name) AS EmployeeName, role.title AS Role
+  const sql = `
+    SELECT 
+      employee.id AS EmployeeID, 
+      CONCAT(employee.first_name, " ", employee.last_name) AS EmployeeName, 
+      role.title AS Role
     FROM employee
-    LEFT JOIN role ON employee.role_id = role.id
-    ORDER BY role.id ASC;`
+    LEFT JOIN role 
+      ON employee.role_id = role.id
+    ORDER BY role.id;`
   db.query(sql, (err, response) => {
     if (err) {
       throw(err);
       return;
     }
     console.log(``);
-    console.log(chalk.white.bold(`====================================================================================`));
-    console.log(`                              ` + chalk.white.bold(` Employee by Role `));
-    console.log(chalk.white.bold(`====================================================================================`));
+    console.log(chalk.white.bold(`============================================================================================================`));
+    console.log(`                                           ` +chalk.white.bold(` Employee by Role `));
+    console.log(chalk.white.bold(`============================================================================================================`));
     console.table(response);
-    console.log(chalk.white.bold(`====================================================================================`));
+    console.log(chalk.white.bold(`============================================================================================================`));
   });
   init();
 };
 
 // VIEW EMPLOYEES BY DEPARTMENT
 function viewEmpByDept() {
-  const sql = `SELECT employee.id AS EmployeeID, CONCAT(employee.first_name, " ", employee.last_name) AS EmployeeName, department.name AS Department 
+  const sql = `
+    SELECT 
+      employee.id AS EmployeeID, 
+      CONCAT(employee.first_name, " ", employee.last_name) AS EmployeeName, 
+      department.name AS Department 
     FROM employee
-    LEFT JOIN role ON employee.role_id = role.id 
-    LEFT JOIN department ON role.department_id = department.id
-    ORDER BY employee.id ASC;`
+    LEFT JOIN role 
+      ON employee.role_id = role.id 
+    LEFT JOIN department 
+      ON role.department_id = department.id
+    ORDER BY employee.id;`
   db.query(sql, (err, response) => {
     if (err) {
       throw(err);
       return;
     }
     console.log(``);
-    console.log(chalk.white.bold(`====================================================================================`));
-    console.log(`                              ` +chalk.white.bold(` Employee by Department `));
-    console.log(chalk.white.bold(`====================================================================================`));
+    console.log(chalk.white.bold(`============================================================================================================`));
+    console.log(`                                           ` +chalk.white.bold(` Employee by Department `));
+    console.log(chalk.white.bold(`============================================================================================================`));
     console.table(response);
-    console.log(chalk.white.bold(`====================================================================================`));
+    console.log(chalk.white.bold(`============================================================================================================`));
   });
   init();
 }
 
 // VIEW EMPLOYEES BY MANAGER
 function viewEmpByMngr() {
-  const query = `SELECT CONCAT(manager.first_name, " ", manager.last_name) AS Manager, department.name AS Department, employee.id AS EmployeeID, CONCAT(employee.first_name, " ", employee.last_name) AS EmployeeName, role.title AS Role
+  const query = `
+    SELECT
+      employee.id AS EmployeeID,
+      CONCAT(employee.first_name, " ", employee.last_name) AS EmployeeName,
+      role.title AS Role,
+      department.name AS Department,
+      CONCAT(manager.first_name, " ", manager.last_name) AS Manager 
     FROM employee
-    LEFT JOIN employee manager ON manager.id = employee.manager_id
-    INNER JOIN role ON (role.id = employee.role_id && employee.manager_id != 'NULL')
-    INNER JOIN department ON (department.id = role.department_id)
+    LEFT JOIN employee manager 
+      ON manager.id = employee.manager_id
+    INNER JOIN role 
+      ON (role.id = employee.role_id && employee.manager_id != 'NULL')
+    INNER JOIN department 
+      ON (department.id = role.department_id)
     ORDER BY manager;`
   db.query(query, (err, response) => {
     if (err) { 
@@ -211,18 +253,18 @@ function viewEmpByMngr() {
       return;
     }
     console.log(``);
-    console.log(chalk.white.bold(`====================================================================================`));
-    console.log(`                              ` +chalk.white.bold(` Employee by Manager `));
-    console.log(chalk.white.bold(`====================================================================================`));
+    console.log(chalk.white.bold(`============================================================================================================`));
+    console.log(`                                           ` +chalk.white.bold(` Employee by Manager `));
+    console.log(chalk.white.bold(`============================================================================================================`));
     console.table(response);
-    console.log(chalk.white.bold(`====================================================================================`));
+    console.log(chalk.white.bold(`============================================================================================================`));
   });
   init();
 };
 // VIEW FUNCTIONS END
 
 // REMOVE FUNCTIONS BEGIN
-// REMOVE ROLE - WORKING
+// REMOVE ROLE
 function removeRole() {
   const sql = `SELECT title FROM role`;
   db.query(sql, (err, response) => {
@@ -270,7 +312,7 @@ function deleteRoleRecord(roleTitle) {
   });
 }
 
-// REMOVE DEPARTMENT - WORKING
+// REMOVE DEPARTMENT
 function removeDept() {
   // Call chooseDept  with action to remove
   chooseDept("remove");
@@ -290,13 +332,20 @@ function chooseDept(operation) {
     response.forEach((dept) => {
       deptNameArr.push(dept.name);
     });
+    var statement;
+    if (operation === "linkrole") {
+      statement = "assign the role";
+    }
+    else { 
+      statement = "remove";
+    }
     // Ask user which Department they want to remove
     inquirer
       .prompt([
         {
           name: "deptChoice",
           type: "list",
-          message: "Please select the department you would like to remove:",
+          message: "Please select the department you would like to " + statement + ":",
           choices: deptNameArr,
         },
       ])
@@ -333,14 +382,19 @@ function deleteDeptRecord(deptName) {
   });
 }
 
-// REMOVE EMPLOYEE - WORKING
+// REMOVE EMPLOYEE
 function removeEmployee() {
   // Call chooseEmployee with action to delete
   chooseEmployee("delete");
 }
 // Choose Employee on which removal action will be performed
 function chooseEmployee(operation) {
-  const sql = `SELECT employee.first_name, employee.last_name, employee.id FROM employee`;
+  const sql = `
+    SELECT 
+      employee.first_name, 
+      employee.last_name, 
+      employee.id 
+    FROM employee`;
   db.query(sql, (err, response) => {
     if (err) {
       throw(err);
@@ -358,7 +412,7 @@ function chooseEmployee(operation) {
         {
           name: "empChoice",
           type: "list",
-          message: "Please select the employee you would like to remove:",
+          message: "Please select the employee you would like to " + operation + ":",
           choices: empNameArr,
         },
       ])
@@ -376,7 +430,7 @@ function chooseEmployee(operation) {
       });
   });
 }
-// Remove Employee Record from Employee Table - WORKING
+// Remove Employee Record from Employee Table
 function deleteEmpRecord(empId) {
   db.query(`DELETE FROM employee WHERE id = ?`, [empId], (err, result) => {
     if (err) {
@@ -451,16 +505,26 @@ function updateRole(newRoleId, empId) {
 // UPDATE EMPLOYEE MANAGER
 function updateEmpMngr() {
   // Get Employee details from Employee Table
-  let sql = `SELECT employee.id, employee.first_name, employee.last_name, employee.manager_id 
+  let sql = `SELECT employee.id, employee.first_name, employee.last_name, employee.manager_id, employee.role_id 
     FROM employee`;
   db.query(sql, (error, response) => {
     // Store Employee name in an array
     let employeeNamesArr = [];
+    // Store Manager name in an array
+    let managerNamesArr = [];
     // Ask user which employee manager needs to be updated &
     // Ask user to select new manager name from list
     response.forEach((employee) => {
-      employeeNamesArr.push(`${employee.first_name} ${employee.last_name}`);
+      //If the employee role is a manager then push to the manager array
+      if (employee.role_id === 1) {
+        managerNamesArr.push(`${employee.first_name} ${employee.last_name}`);
+      }
+      //Otherwise push to the employee array
+      else {
+        employeeNamesArr.push(`${employee.first_name} ${employee.last_name}`);
+      }
     });
+
     inquirer
       .prompt([
         {
@@ -473,7 +537,7 @@ function updateEmpMngr() {
           name: "newManager",
           type: "list",
           message: "Please select a manager to assign to employee:",
-          choices: employeeNamesArr,
+          choices: managerNamesArr,
         },
       ])
 
@@ -497,11 +561,11 @@ function updateEmpMngr() {
         });
 
         // If Employee name and Manager name are the same, mark it as an invalid choice
-        if (answer.chosenEmployee === answer.newManager) {
+        if (answer.selectedEmployee === answer.newManager) {
           console.log(chalk.white.bold(`====================================================================================`));
           console.log(chalk.white.bold(                     ` Sorry, Invalid Manager Selection `));
           console.log(chalk.white.bold(`====================================================================================`));
-          promptUserInput();
+          init();
         } else {
           // Update Employee's Manager
           let sql = `UPDATE employee SET employee.manager_id = ? WHERE employee.id = ?`;
@@ -520,7 +584,7 @@ function updateEmpMngr() {
 // UPDATE FUNCTIONS END
 
 // ADD FUNCTIONS BEGIN
-// ADD DEPARTMENT - WORKING
+// ADD DEPARTMENT
 function addDept() {
   // Ask user what Department they'd like to add
   inquirer
@@ -530,6 +594,8 @@ function addDept() {
         type: "text",
         message: "Please enter the department you would like to add:",
         validate: (nameInput) => {
+          // Using regex for validation to replace white space 
+          nameInput = nameInput.replace(/\s/g, "");
           if (nameInput) {
             return true;
           } else {
@@ -542,7 +608,8 @@ function addDept() {
     .then(({ deptName }) => {
       const sql = `INSERT INTO department(name) VALUES(?)ON DUPLICATE KEY UPDATE name=?;`;
       // If Department name does NOT exist, insert Department name into Department Table
-      const params = [deptName, deptName];
+      // Using regex for validation to replace white space
+      const params = [deptName.replace(/\s/g, ' '), deptName.replace(/\s/g, ' ')];
       db.query(sql, params, (err, response) => {
         if (err) {
           console.log(err);
@@ -571,6 +638,8 @@ function addDeptToRole(depId) {
         type: "text",
         message: "Please enter the role you would like to add:",
         validate: (titleInput) => {
+          // Using regex for validation to replace white space
+          titleInput = titleInput.replace(/\s/g, "'");
           if (titleInput) {
             return true;
           } else {
@@ -596,7 +665,8 @@ function addDeptToRole(depId) {
     // Insert data collected into Role Table and link it to corresponding Department
     .then((answer) => {
       const sql = `INSERT INTO role(title, salary, department_id) VALUES(?,?,?)`;
-      const params = [answer.roleTitle, answer.roleSalary, depId];
+      // Using regex for validation to replace white space
+      const params = [answer.roleTitle.replace(/\s/g, ' '), answer.roleSalary, depId];
       db.query(sql, params, (err, response) => {
         if (err) {
           console.log(err);
@@ -620,9 +690,12 @@ function addEmployee() {
         type: "input",
         message: "Please enter employee's first name:",
         validate: (addFirstName) => {
+          // Using regex for validation to replace white space
+          addFirstName = addFirstName.replace(/\s/g, "");
           if (addFirstName) {
             return true;
-          } else {
+          } 
+          else {
             console.log("Please enter a valid first name:");
             return false;
           }
@@ -633,6 +706,8 @@ function addEmployee() {
         type: "input",
         message: "Please enter employee's last name:",
         validate: (addLastName) => {
+          // Using regex for validation to replace white space
+          addLastName = addLastName.replace(/\s/g, "");
           if (addLastName) {
             return true;
           } else {
@@ -644,7 +719,8 @@ function addEmployee() {
     ])
     .then((answer) => {
       // Add first and last name to an array
-      const empArr = [answer.firstName, answer.lastName];
+      // Using regex for validation to replace white space
+      const empArr = [answer.firstName.replace(/\s/g, '-'), answer.lastName.replace(/\s/g, '-')];
       // Select Employee Role from Role Table
       const sql = `SELECT role.id, role.title FROM role`;
       db.query(sql, (error, response) => {
